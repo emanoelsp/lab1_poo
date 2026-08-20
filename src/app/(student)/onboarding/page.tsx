@@ -192,6 +192,98 @@ export default function OnboardingPage() {
         </div>
       </section>
 
+      {/* Seção 6 — Como montar o PDF */}
+      <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-100 flex items-center gap-3">
+          <span className="text-2xl">📄</span>
+          <div>
+            <h2 className="text-xl font-bold text-blue-700">Como montar o PDF de entrega</h2>
+            <p className="text-sm text-gray-500 mt-0.5">
+              Para cada problema corrigido, inclua uma seção no PDF seguindo exatamente esta estrutura.
+            </p>
+          </div>
+        </div>
+
+        <div className="px-6 py-5 space-y-5">
+          {/* Alerta de documentar durante */}
+          <div className="flex items-start gap-3 bg-amber-50 border-2 border-amber-400 rounded-xl px-5 py-4">
+            <span className="text-2xl shrink-0 mt-0.5">⚠️</span>
+            <div className="space-y-1">
+              <p className="font-black text-amber-800 uppercase tracking-wide text-sm">
+                Documente enquanto edita — não deixe para o final!
+              </p>
+              <p className="text-sm text-amber-700 leading-relaxed">
+                Antes de alterar qualquer linha, tire um <strong>print do código original</strong> com o problema destacado.
+                Depois de refatorar, tire o <strong>print do código novo</strong>. Se você deixar para documentar no final,
+                vai perder o &ldquo;antes&rdquo; — e sem o &ldquo;antes&rdquo; não há comparação possível.
+              </p>
+              <p className="text-sm font-bold text-amber-800 mt-1">
+                Regra prática: abriu o arquivo para editar → print antes. Terminou a correção → print depois. Só então avance.
+              </p>
+            </div>
+          </div>
+
+          {/* Tabela de estrutura */}
+          <div>
+            <p className="text-sm font-semibold text-gray-700 mb-3">
+              Estrutura de cada página (ou seção) do PDF — uma por problema corrigido:
+            </p>
+            <div className="overflow-x-auto rounded-xl border border-gray-200">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    {["Tipo de Bug", "Classe afetada", "Descrição do problema", "Código errado (print)", "Código corrigido (print)"].map((h) => (
+                      <th key={h} className="border-r border-gray-200 last:border-0 px-4 py-3 text-left text-xs font-bold text-gray-600 whitespace-nowrap">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white">
+                    <td className="border-r border-gray-100 px-4 py-3 text-xs text-gray-600 align-top">
+                      <span className="block font-semibold text-gray-700 mb-1">Um dos cinco:</span>
+                      <span className="block text-red-600 font-medium">God Class</span>
+                      <span className="block text-red-600 font-medium">Data Class</span>
+                      <span className="block text-red-600 font-medium">Primitive Obsession</span>
+                      <span className="block text-red-600 font-medium">Feature Envy</span>
+                      <span className="block text-red-600 font-medium">Long Param List</span>
+                    </td>
+                    <td className="border-r border-gray-100 px-4 py-3 text-xs text-gray-600 align-top">
+                      Nome da classe e, se aplicável, o método específico.
+                      <span className="block text-gray-400 mt-1">
+                        Ex: <code className="bg-gray-100 px-1 rounded">Liga</code>,{" "}
+                        <code className="bg-gray-100 px-1 rounded">GestorObras.cancelarObra</code>
+                      </span>
+                    </td>
+                    <td className="border-r border-gray-100 px-4 py-3 text-xs text-gray-600 align-top">
+                      Explique o que está errado e por que viola boas práticas de POO
+                      (SRP, associação, agregação, encapsulamento etc.)
+                    </td>
+                    <td className="border-r border-gray-100 px-4 py-3 text-xs text-gray-600 align-top">
+                      Print do trecho <strong>original</strong> com o problema destacado (sublinhado, seta ou círculo).
+                    </td>
+                    <td className="px-4 py-3 text-xs text-gray-600 align-top">
+                      Print do trecho <strong>após a refatoração</strong>, mostrando a melhoria.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Ordem MoSCoW */}
+          <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+            <span className="text-lg shrink-0">📌</span>
+            <p className="text-sm text-blue-800">
+              <strong>Ordem no PDF = sua priorização MoSCoW.</strong> Apresente as correções na sequência:{" "}
+              <strong>Must Have primeiro</strong>, depois Should Have, Could Have e Won&apos;t Have.
+              Inclua somente as correções que você <em>realmente implementou</em> no código.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Navegação */}
       <div className="flex justify-between items-center pt-2">
         <Link
