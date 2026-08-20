@@ -7,3 +7,6 @@ out/
 dist/
 .DS_Store
 *.log
+.vercel
+.env*
+tsconfig.tsbuildinfo
