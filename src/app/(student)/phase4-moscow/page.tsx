@@ -112,7 +112,7 @@ export default function Phase4Page() {
     try {
       if (!user?.uid) return;
       await saveMoscow(user.uid, matrix, justification);
-      router.push("/phase5-delivery");
+      router.push("/phase3-repository");
     } catch {
       setError("Erro ao salvar. Tente novamente.");
     } finally {
@@ -131,9 +131,9 @@ export default function Phase4Page() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Fase 4 — Matriz MoSCoW</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Fase 3 — Matriz MoSCoW</h1>
         <p className="text-gray-500 mt-1">
-          Priorize os problemas encontrados. Você não terá tempo de corrigir tudo — escolha com critério.
+          Antes de clonar o código, decida o que vai corrigir. Você não terá tempo de corrigir tudo — priorize com critério.
         </p>
       </div>
 
@@ -286,7 +286,7 @@ export default function Phase4Page() {
 
       <div className="flex justify-between">
         <Link
-          href="/phase3-repository"
+          href="/phase1-estimation"
           className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors min-h-[48px] flex items-center"
         >
           ← Voltar

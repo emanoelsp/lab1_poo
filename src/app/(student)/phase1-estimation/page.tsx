@@ -65,7 +65,7 @@ export default function Phase1Page() {
     try {
       if (!user?.uid) return;
       await saveInitialStoryPoints(user.uid, points);
-      router.push("/phase3-repository");
+      router.push("/phase4-moscow");
     } catch {
       setError("Erro ao salvar. Tente novamente.");
     } finally {

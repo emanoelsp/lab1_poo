@@ -38,9 +38,9 @@ export default function Phase3Page() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Fase 3 — Seu Repositório</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Fase 4 — Seu Repositório</h1>
         <p className="text-gray-500 mt-1">
-          Este é o projeto Java legado atribuído ao seu grupo. Clone, execute e analise o código.
+          Você já priorizou o que vai corrigir. Agora clone o repositório e execute as correções Must Have.
         </p>
       </div>
 
@@ -127,23 +127,21 @@ export default function Phase3Page() {
       {/* Chamada para a próxima etapa */}
       <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl px-6 py-5 space-y-2">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">📊</span>
-          <p className="font-bold text-blue-800 text-base">Próximo passo: Matriz de Prioridade</p>
+          <span className="text-2xl">🚀</span>
+          <p className="font-bold text-blue-800 text-base">Próximo passo: Entrega Final</p>
         </div>
         <p className="text-sm text-blue-700 leading-relaxed">
-          Com base na análise do código e nos code smells identificados, avance para a{" "}
-          <strong>Matriz MoSCoW</strong>. Preencha cada problema conforme o impacto que ele causa no sistema
-          e elabore sua solução proposta — quais correções são essenciais, quais são desejáveis e quais ficam
-          fora do escopo desta entrega.
+          Com as correções feitas, avance para a <strong>Entrega Final</strong>. Você vai informar o link do
+          repositório refatorado, confirmar os Story Points finais e enviar o PDF de documentação.
         </p>
       </div>
 
       <div className="flex justify-between">
-        <Link href="/phase1-estimation" className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors min-h-[48px] flex items-center">
+        <Link href="/phase4-moscow" className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors min-h-[48px] flex items-center">
           ← Voltar
         </Link>
-        <Link href="/phase4-moscow" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors min-h-[48px] flex items-center">
-          Próximo: Matriz MoSCoW →
+        <Link href="/phase5-delivery" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors min-h-[48px] flex items-center">
+          Próximo: Entrega →
         </Link>
       </div>
     </div>
