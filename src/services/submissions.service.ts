@@ -84,11 +84,6 @@ export async function saveUmlAnswer(
   });
 }
 
-export async function saveCodeAnalysis(uid: string, codeAnalysis: string): Promise<void> {
-  await ensureSubmission(uid);
-  await updateDoc(doc(db, "pbl_submissions", uid), { codeAnalysis });
-}
-
 export async function saveDeliveryDraft(
   uid: string,
   data: { githubLink?: string; storyPointsJustification?: string }

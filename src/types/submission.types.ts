@@ -14,7 +14,6 @@ export interface Submission {
   moscowMatrix: MoscowMatrix;
   moscowJustification: string;
   storyPointsJustification?: string;
-  codeAnalysis?: string;
   githubLink: string;
   pdfUrl: string;
   surpriseAcknowledged: boolean;

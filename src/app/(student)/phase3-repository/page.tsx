@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth.store";
-import { useSubmission } from "@/hooks/useSubmission";
-import { saveCodeAnalysis } from "@/services/submissions.service";
 import { Copy, ExternalLink, CheckCircle } from "lucide-react";
 
 const REPOS: Record<number, { name: string; url: string; domain: string }> = {
@@ -27,15 +25,9 @@ const REPOS: Record<number, { name: string; url: string; domain: string }> = {
 
 export default function Phase3Page() {
   const { user } = useAuthStore();
-  const { submission } = useSubmission(user?.uid);
   const repoId = (user?.assignedRepoId ?? 1) as 1 | 2 | 3;
   const repo = REPOS[repoId];
   const [copied, setCopied] = useState(false);
-  const [analysis, setAnalysis] = useState("");
-
-  useEffect(() => {
-    if (submission?.codeAnalysis) setAnalysis(submission.codeAnalysis);
-  }, [submission]);
 
   async function handleCopy() {
     await navigator.clipboard.writeText(repo.url);
@@ -110,28 +102,6 @@ export default function Phase3Page() {
         <p className="text-sm text-yellow-800">
           <strong>⚠️ Importante:</strong> O código compila sem erros, mas falha em regras de negócio. Sua missão é encontrar os bugs lógicos e os code smells, não apenas os erros de compilação.
         </p>
-      </div>
-
-      {/* Análise do código — captura obrigatória */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-3">
-        <div>
-          <h3 className="font-bold text-gray-800">O que você encontrou no código? *</h3>
-          <p className="text-sm text-gray-500 mt-1">
-            Após executar e ler o código, registre aqui os code smells e bugs que identificou.
-            Use nomes de classe e método — seja específico. Este registro alimenta sua análise no MoSCoW.
-          </p>
-        </div>
-        <textarea
-          value={analysis}
-          onChange={(e) => setAnalysis(e.target.value)}
-          onBlur={() => {
-            if (user?.uid && analysis.trim()) saveCodeAnalysis(user.uid, analysis).catch(() => {});
-          }}
-          rows={6}
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none"
-          placeholder={`Ex:\n- God Class em ${repoId === 1 ? "Liga.java" : repoId === 2 ? "GestorObras.java" : "SistemaLogistica.java"}: concentra todo o comportamento do sistema em um único arquivo\n- ${repoId === 1 ? "transferirJogador() não remove o jogador do time de origem" : repoId === 2 ? "cancelarObra() retorna 1 em vez da quantidade real de materiais liberados" : "cancelarEntrega() não remove o cargaId da lista do caminhão"}\n- Data Class em ${repoId === 1 ? "Jogador.java" : repoId === 2 ? "Material.java" : "Carga.java"}: apenas getters/setters, sem comportamento próprio`}
-        />
-        <p className="text-xs text-gray-400">Salvo automaticamente ao sair do campo.</p>
       </div>
 
       {/* Alerta: documentar durante a edição */}
