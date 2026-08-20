@@ -10,38 +10,41 @@ export default function OnboardingPage() {
         </p>
       </div>
 
-      {/* Seção 1 — Story Points */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="text-xl font-bold text-blue-700">📋 Metodologias Ágeis & Story Points</h2>
-        <p className="text-gray-700 leading-relaxed">
-          <strong>História do Cliente (User Story)</strong> descreve uma funcionalidade do ponto de vista
-          do usuário final. Ex: <em>&ldquo;Como gerente, quero ver a folha salarial do time para controlar custos.&rdquo;</em>{" "}
-          A história conecta o requisito ao valor de negócio — sem detalhar como implementar.
-        </p>
-        <p className="text-gray-700 leading-relaxed">
-          <strong>Story Points</strong> medem a <em>complexidade relativa</em> de uma tarefa — não o tempo.
-          Usamos a sequência de Fibonacci: <strong>1 · 2 · 3 · 5 · 8</strong>. Quanto maior o número,
-          mais complexa e incerta a tarefa. Um item 8 não leva o dobro do tempo de um 4; ele significa que
-          há o dobro de incerteza ou dependências ocultas. <strong>8 é o teto</strong> — se uma funcionalidade
-          parece maior, o sinal é que ela deve ser dividida antes de ser estimada.
-        </p>
-        <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800 space-y-2">
-          <p>💡 <strong>Por que Fibonacci?</strong> O salto entre os números reflete que estimativas de alta
-          complexidade têm mais incerteza. Isso força o time a dividir tarefas grandes em menores antes de
-          estimar.</p>
-          <p>🃏 <strong>Planning Poker:</strong> cada membro vota independentemente; diferenças grandes
-          disparam discussão — que é exatamente o objetivo, revelar suposições ocultas.</p>
+      {/* Visão geral da sequência */}
+      <section className="bg-blue-600 rounded-2xl p-6 text-white space-y-4">
+        <h2 className="text-lg font-bold">Sequência da atividade</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+          {[
+            { step: "Fase 1", label: "Auditoria UML", desc: "Analise o diagrama de classes do projeto legado" },
+            { step: "Fase 2", label: "Story Points", desc: "Estime a complexidade de cada funcionalidade" },
+            { step: "Fase 3", label: "MoSCoW", desc: "Priorize o que vai corrigir antes de clonar" },
+            { step: "Fase 4", label: "Repositório", desc: "Clone e execute as correções Must Have" },
+            { step: "Fase 5", label: "Entrega", desc: "Envie o link do repo e o PDF documentado" },
+          ].map((p, i) => (
+            <div key={p.step} className="flex sm:flex-col items-start sm:items-center gap-3 sm:gap-1 sm:text-center">
+              {i < 4 && (
+                <div className="hidden sm:block absolute" />
+              )}
+              <div className="shrink-0 w-8 h-8 rounded-full bg-white text-blue-700 font-black text-xs flex items-center justify-center">
+                {i + 1}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-blue-200 uppercase">{p.step}</p>
+                <p className="text-sm font-semibold">{p.label}</p>
+                <p className="text-xs text-blue-200 mt-0.5 hidden sm:block">{p.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <p className="text-gray-700 leading-relaxed">
-          Nesta atividade você vai estimar os Story Points <em>antes</em> de ver o código e depois
-          <em> revisitar</em> essa estimativa após refatorar. A diferença entre as duas estimativas
-          revela o quanto a complexidade estava escondida nos code smells do código legado.
+        <p className="text-xs text-blue-200 pt-1">
+          ⚠️ <strong>Atenção:</strong> você prioriza na Fase 3 (MoSCoW) <em>antes</em> de abrir qualquer arquivo Java.
+          Isso é intencional — assim você chega no repositório sabendo exatamente o que deve corrigir.
         </p>
       </section>
 
-      {/* Seção 2 — UML */}
+      {/* Seção 1 — UML */}
       <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="text-xl font-bold text-blue-700">🔷 UML — Diagrama de Classes</h2>
+        <h2 className="text-xl font-bold text-blue-700">🔷 Fase 1 — UML: Diagrama de Classes</h2>
         <p className="text-gray-700 leading-relaxed">
           O Diagrama de Classes representa a <strong>estrutura estática</strong> do sistema: quais classes
           existem, quais atributos e métodos cada uma tem, e como elas se relacionam entre si. É o mapa
@@ -80,81 +83,42 @@ export default function OnboardingPage() {
         </div>
       </section>
 
-      {/* Seção 3 — Code Smells */}
+      {/* Seção 2 — Story Points */}
       <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="text-xl font-bold text-blue-700">🦨 Code Smells (Martin Fowler)</h2>
+        <h2 className="text-xl font-bold text-blue-700">📋 Fase 2 — Story Points</h2>
         <p className="text-gray-700 leading-relaxed">
-          <strong>Code Smells</strong> são padrões no código que indicam problemas de design — não são bugs,
-          o código funciona. Mas são sinais de que a estrutura vai dificultar manutenção, testes e evolução.
-          Martin Fowler catalogou os principais em <em>Refactoring</em> (1999). Você vai identificar
-          esses padrões no código legado do projeto que recebeu.
+          <strong>Story Points</strong> medem a <em>complexidade relativa</em> de uma tarefa — não o tempo.
+          Usamos a sequência de Fibonacci: <strong>1 · 2 · 3 · 5 · 8</strong>. Quanto maior o número,
+          mais complexa e incerta a tarefa. Um item 8 não leva o dobro do tempo de um 4; ele significa que
+          há o dobro de incerteza ou dependências ocultas. <strong>8 é o teto</strong> — se uma funcionalidade
+          parece maior, o sinal é que ela deve ser dividida antes de ser estimada.
         </p>
-        <div className="space-y-3">
-          {[
-            {
-              name: "God Class",
-              desc: "Uma única classe que faz tudo: calcula, persiste dados, exibe resultados e gerencia regras de negócio. Viola o Princípio da Responsabilidade Única (SRP) e se torna impossível de manter ou testar isoladamente. Solução: extrair classes com responsabilidade única.",
-            },
-            {
-              name: "Feature Envy",
-              desc: "Um método em classe A que acessa dados de classe B repetidamente — mais do que os próprios dados de A. Sinal de que esse método está no lugar errado e deveria estar em B. Solução: mover o método para a classe cujos dados ele mais usa.",
-            },
-            {
-              name: "Long Method",
-              desc: "Método com dezenas de linhas, múltiplos loops aninhados e condicionais encadeadas. Faz várias coisas ao mesmo tempo. Dificulta leitura, teste e reutilização. Solução: extrair trechos em métodos menores e bem nomeados.",
-            },
-            {
-              name: "Data Class",
-              desc: "Classe com apenas atributos getters/setters e zero comportamento. Toda lógica que deveria estar nela vazou para outra classe (geralmente a God Class). Solução: mover os comportamentos relevantes para dentro da classe.",
-            },
-            {
-              name: "Long Parameter List",
-              desc: "Construtor ou método com 5+ parâmetros primitivos. Indica que faltam objetos intermediários agrupando dados relacionados. Ex: em vez de (nome, rua, número, cidade, cep), criar um objeto Endereco. Solução: criar classes de valor.",
-            },
-            {
-              name: "Primitive Obsession",
-              desc: "Uso de tipos primitivos (String, int) para representar conceitos de domínio que mereciam uma classe. Ex: representar status de entrega como String &ldquo;ativo&rdquo;/&ldquo;cancelado&rdquo; em vez de um objeto com comportamento. Solução: criar classes de domínio ricas.",
-            },
-          ].map((smell) => (
-            <div key={smell.name} className="bg-red-50 rounded-lg p-4 space-y-1">
-              <p className="text-red-600 font-bold text-sm">🚩 {smell.name}</p>
-              <p className="text-sm text-gray-700">{smell.desc}</p>
-            </div>
-          ))}
+        <p className="text-gray-700 leading-relaxed">
+          <strong>História do Cliente (User Story)</strong> descreve uma funcionalidade do ponto de vista
+          do usuário final. Ex: <em>&ldquo;Como gerente, quero ver a folha salarial do time para controlar custos.&rdquo;</em>{" "}
+          A história conecta o requisito ao valor de negócio — sem detalhar como implementar.
+        </p>
+        <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800 space-y-2">
+          <p>💡 <strong>Por que Fibonacci?</strong> O salto entre os números reflete que estimativas de alta
+          complexidade têm mais incerteza. Isso força o time a dividir tarefas grandes em menores antes de
+          estimar.</p>
+          <p>🃏 <strong>Planning Poker:</strong> cada membro vota independentemente; diferenças grandes
+          disparam discussão — que é exatamente o objetivo, revelar suposições ocultas.</p>
         </div>
+        <p className="text-gray-700 leading-relaxed">
+          Nesta atividade você vai estimar os Story Points <em>com base no UML</em> e depois
+          <em> revisitar</em> essa estimativa na entrega. A diferença entre as duas estimativas
+          revela o quanto a complexidade estava escondida nos code smells do código legado.
+        </p>
       </section>
 
-      {/* Seção 4 — SRP */}
+      {/* Seção 3 — MoSCoW */}
       <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="text-xl font-bold text-blue-700">🎯 SRP — Princípio da Responsabilidade Única</h2>
+        <h2 className="text-xl font-bold text-blue-700">📊 Fase 3 — Matriz MoSCoW</h2>
         <p className="text-gray-700 leading-relaxed">
-          <strong>&ldquo;Uma classe deve ter um único motivo para mudar.&rdquo;</strong> — Robert C. Martin
-        </p>
-        <p className="text-gray-700 leading-relaxed">
-          Na prática: se você precisar adicionar uma nova regra de negócio e tiver que modificar a mesma
-          classe que também cuida de persistência e de exibição, essa classe tem responsabilidades demais.
-          Cada vez que qualquer uma dessas responsabilidades mudar, toda a classe fica em risco.
-        </p>
-        <p className="text-gray-700 leading-relaxed">
-          A refatoração correta nesta disciplina <strong>não</strong> usa herança ou interfaces.
-          Você deve <strong>extrair classes</strong> com responsabilidade única, <strong>criar objetos</strong>{" "}
-          com comportamento próprio e <strong>delegar</strong> responsabilidades entre eles usando
-          Associações e Agregações diretas.
-        </p>
-        <div className="bg-green-50 rounded-lg p-4 text-sm text-green-800 space-y-1">
-          <p>✅ <strong>O que você PODE usar:</strong> Extração de Classes, Atributos bem nomeados, Métodos com responsabilidade única, Associações (1:1, 1:N), Agregações e Composições.</p>
-          <p>❌ <strong>O que é PROIBIDO:</strong> <code>extends</code>, <code>implements</code>, Strategy, State, Observer, polimorfismo, classes abstratas.</p>
-        </div>
-      </section>
-
-      {/* Seção 5 — MoSCoW */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="text-xl font-bold text-blue-700">📊 Matriz MoSCoW — Priorização</h2>
-        <p className="text-gray-700 leading-relaxed">
-          Depois de identificar os code smells e analisar o código, nem tudo pode (ou deve) ser
-          refatorado ao mesmo tempo. A matriz MoSCoW é um framework de priorização que classifica
-          cada funcionalidade em quatro categorias. Ela simula a decisão real de um tech lead
-          explicando ao cliente o que vai e o que não vai entrar nesta sprint.
+          Com base no UML e nas estimativas de Story Points, você vai <strong>priorizar o que vai corrigir
+          antes mesmo de clonar o repositório</strong>. Este é o fluxo real: um tech lead define o escopo
+          da sprint antes de a equipe começar a codar. A MoSCoW classifica cada problema em quatro categorias:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
@@ -190,6 +154,78 @@ export default function OnboardingPage() {
             </div>
           ))}
         </div>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+          ⚡ <strong>Por que antes de clonar?</strong> Quando você abre o código sem prioridade definida,
+          tende a corrigir o que aparece primeiro — não o que importa mais. Com a MoSCoW em mãos,
+          você chega no repositório com missão clara: implemente os Must Have, depois os Should Have
+          se sobrar tempo.
+        </div>
+      </section>
+
+      {/* Seção 4 — Code Smells */}
+      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <h2 className="text-xl font-bold text-blue-700">🦨 Fase 4 — Code Smells (o que você vai corrigir)</h2>
+        <p className="text-gray-700 leading-relaxed">
+          <strong>Code Smells</strong> são padrões no código que indicam problemas de design — não são bugs,
+          o código compila. Mas são sinais de que a estrutura vai dificultar manutenção, testes e evolução.
+          Você já os priorizou na MoSCoW; agora vai encontrá-los no código e corrigi-los.
+        </p>
+        <div className="space-y-3">
+          {[
+            {
+              name: "God Class",
+              desc: "Uma única classe que faz tudo: calcula, persiste dados, exibe resultados e gerencia regras de negócio. Viola o Princípio da Responsabilidade Única (SRP) e se torna impossível de manter ou testar isoladamente. Solução: extrair classes com responsabilidade única.",
+            },
+            {
+              name: "Feature Envy",
+              desc: "Um método em classe A que acessa dados de classe B repetidamente — mais do que os próprios dados de A. Sinal de que esse método está no lugar errado e deveria estar em B. Solução: mover o método para a classe cujos dados ele mais usa.",
+            },
+            {
+              name: "Long Method",
+              desc: "Método com dezenas de linhas, múltiplos loops aninhados e condicionais encadeadas. Faz várias coisas ao mesmo tempo. Dificulta leitura, teste e reutilização. Solução: extrair trechos em métodos menores e bem nomeados.",
+            },
+            {
+              name: "Data Class",
+              desc: "Classe com apenas atributos getters/setters e zero comportamento. Toda lógica que deveria estar nela vazou para outra classe (geralmente a God Class). Solução: mover os comportamentos relevantes para dentro da classe.",
+            },
+            {
+              name: "Long Parameter List",
+              desc: "Construtor ou método com 5+ parâmetros primitivos. Indica que faltam objetos intermediários agrupando dados relacionados. Ex: em vez de (nome, rua, número, cidade, cep), criar um objeto Endereco. Solução: criar classes de valor.",
+            },
+            {
+              name: "Primitive Obsession",
+              desc: "Uso de tipos primitivos (String, int) para representar conceitos de domínio que mereciam uma classe. Ex: representar status de entrega como String \"ativo\"/\"cancelado\" em vez de um objeto com comportamento. Solução: criar classes de domínio ricas.",
+            },
+          ].map((smell) => (
+            <div key={smell.name} className="bg-red-50 rounded-lg p-4 space-y-1">
+              <p className="text-red-600 font-bold text-sm">🚩 {smell.name}</p>
+              <p className="text-sm text-gray-700">{smell.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Seção 5 — SRP */}
+      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <h2 className="text-xl font-bold text-blue-700">🎯 SRP — Princípio da Responsabilidade Única</h2>
+        <p className="text-gray-700 leading-relaxed">
+          <strong>&ldquo;Uma classe deve ter um único motivo para mudar.&rdquo;</strong> — Robert C. Martin
+        </p>
+        <p className="text-gray-700 leading-relaxed">
+          Na prática: se você precisar adicionar uma nova regra de negócio e tiver que modificar a mesma
+          classe que também cuida de persistência e de exibição, essa classe tem responsabilidades demais.
+          Cada vez que qualquer uma dessas responsabilidades mudar, toda a classe fica em risco.
+        </p>
+        <p className="text-gray-700 leading-relaxed">
+          A refatoração correta nesta disciplina <strong>não</strong> usa herança ou interfaces.
+          Você deve <strong>extrair classes</strong> com responsabilidade única, <strong>criar objetos</strong>{" "}
+          com comportamento próprio e <strong>delegar</strong> responsabilidades entre eles usando
+          Associações e Agregações diretas.
+        </p>
+        <div className="bg-green-50 rounded-lg p-4 text-sm text-green-800 space-y-1">
+          <p>✅ <strong>O que você PODE usar:</strong> Extração de Classes, Atributos bem nomeados, Métodos com responsabilidade única, Associações (1:1, 1:N), Agregações e Composições.</p>
+          <p>❌ <strong>O que é PROIBIDO:</strong> <code>extends</code>, <code>implements</code>, Strategy, State, Observer, polimorfismo, classes abstratas.</p>
+        </div>
       </section>
 
       {/* Seção 6 — Como montar o PDF */}
@@ -197,7 +233,7 @@ export default function OnboardingPage() {
         <div className="px-6 py-5 border-b border-gray-100 flex items-center gap-3">
           <span className="text-2xl">📄</span>
           <div>
-            <h2 className="text-xl font-bold text-blue-700">Como montar o PDF de entrega</h2>
+            <h2 className="text-xl font-bold text-blue-700">Fase 5 — Como montar o PDF de entrega</h2>
             <p className="text-sm text-gray-500 mt-0.5">
               Para cada problema corrigido, inclua uma seção no PDF seguindo exatamente esta estrutura.
             </p>
