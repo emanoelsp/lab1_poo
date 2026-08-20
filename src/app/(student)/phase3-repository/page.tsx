@@ -104,6 +104,40 @@ export default function Phase3Page() {
         </p>
       </div>
 
+      {/* Alerta: documentar durante a edição */}
+      <div className="bg-amber-50 border-2 border-amber-400 rounded-2xl px-6 py-5 space-y-3">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">📸</span>
+          <p className="font-black text-amber-800 uppercase tracking-wide text-sm">
+            Documente cada alteração no momento em que fizer
+          </p>
+        </div>
+        <p className="text-sm text-amber-700 leading-relaxed">
+          Antes de editar qualquer arquivo, tire um <strong>print do trecho original</strong> com o problema destacado.
+          Após corrigir, tire o <strong>print do novo código</strong>. Não deixe para documentar depois —
+          você não vai lembrar como estava antes.
+        </p>
+        <div className="bg-amber-100 rounded-xl px-4 py-3 border border-amber-300">
+          <p className="text-sm font-bold text-amber-900">
+            Regra prática: abriu o arquivo → print antes. Terminou a correção → print depois. Só então avance.
+          </p>
+        </div>
+      </div>
+
+      {/* Chamada para a próxima etapa */}
+      <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl px-6 py-5 space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">📊</span>
+          <p className="font-bold text-blue-800 text-base">Próximo passo: Matriz de Prioridade</p>
+        </div>
+        <p className="text-sm text-blue-700 leading-relaxed">
+          Com base na análise do código e nos code smells identificados, avance para a{" "}
+          <strong>Matriz MoSCoW</strong>. Preencha cada problema conforme o impacto que ele causa no sistema
+          e elabore sua solução proposta — quais correções são essenciais, quais são desejáveis e quais ficam
+          fora do escopo desta entrega.
+        </p>
+      </div>
+
       <div className="flex justify-between">
         <Link href="/phase2-uml" className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors min-h-[48px] flex items-center">
           ← Voltar
