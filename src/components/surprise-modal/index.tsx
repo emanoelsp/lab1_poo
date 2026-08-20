@@ -5,6 +5,7 @@ import { AlertTriangle } from "lucide-react";
 import { useSurpriseStore } from "@/stores/surprise.store";
 import { acknowledgeSurprise } from "@/services/submissions.service";
 import { useAuthStore } from "@/stores/auth.store";
+import { useSubmission } from "@/hooks/useSubmission";
 
 const FALLBACK_MESSAGE =
   "O cliente solicitou uma mudança urgente de regra de negócio. Esta feature precisa ir para produção HOJE. Ajuste seu planejamento agora!";
@@ -12,11 +13,13 @@ const FALLBACK_MESSAGE =
 export function SurpriseModal() {
   const { isActive, messages, requirements, dismiss } = useSurpriseStore();
   const { user } = useAuthStore();
+  const { submission, loading: submissionLoading } = useSubmission(user?.uid);
   const [input, setInput] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState("");
 
-  if (!isActive) return null;
+  // Não mostra o modal se: inativo, ainda carregando, ou aluno já confirmou
+  if (!isActive || submissionLoading || submission?.surpriseAcknowledged) return null;
 
   const repoKey = String(user?.assignedRepoId ?? "");
   const message = messages[repoKey] || FALLBACK_MESSAGE;
