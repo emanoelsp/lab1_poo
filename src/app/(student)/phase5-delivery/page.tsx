@@ -9,6 +9,13 @@ import { Upload, CheckCircle } from "lucide-react";
 
 const FIBONACCI = [1, 2, 3, 5, 8] as const;
 
+const MOSCOW_STYLES: Record<string, { label: string; color: string; bg: string }> = {
+  must:   { label: "Must Have",   color: "text-red-700",    bg: "bg-red-50 border-red-200" },
+  should: { label: "Should Have", color: "text-orange-700", bg: "bg-orange-50 border-orange-200" },
+  could:  { label: "Could Have",  color: "text-yellow-700", bg: "bg-yellow-50 border-yellow-200" },
+  wont:   { label: "Won't Have",  color: "text-slate-600",  bg: "bg-slate-100 border-slate-300" },
+};
+
 const GIT_STEPS = [
   {
     desc: "Clone o repositório legado da disciplina (se ainda não fez)",
@@ -196,28 +203,31 @@ export default function Phase5Page() {
           )}
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {(["must", "should", "could", "wont"] as const).map((cat) => (
-              <div key={cat} className="bg-gray-50 rounded-xl border border-gray-200 p-4">
-                <p className="text-xs font-bold text-gray-600 uppercase mb-2">{cat}</p>
-                <ul className="space-y-1.5">
-                  {submission.moscowMatrix[cat].map((p) => {
-                    const isSurprise = (submission.surpriseRequirements ?? []).includes(p);
-                    return (
-                      <li key={p} className="text-xs text-gray-600 flex items-start gap-1">
-                        {isSurprise ? (
-                          <span className="shrink-0 font-bold text-amber-500">★</span>
-                        ) : (
-                          <span className="shrink-0 text-gray-400">•</span>
-                        )}
-                        <span className={isSurprise ? "text-amber-800 font-medium" : ""}>
-                          {p.split("(")[0].trim()}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+            {(["must", "should", "could", "wont"] as const).map((cat) => {
+              const style = MOSCOW_STYLES[cat];
+              return (
+                <div key={cat} className={`rounded-xl border p-4 ${style.bg}`}>
+                  <p className={`text-xs font-bold ${style.color} uppercase mb-2`}>{style.label}</p>
+                  <ul className="space-y-1.5">
+                    {submission.moscowMatrix[cat].map((p) => {
+                      const isSurprise = (submission.surpriseRequirements ?? []).includes(p);
+                      return (
+                        <li key={p} className={`text-xs flex items-start gap-1 ${style.color}`}>
+                          {isSurprise ? (
+                            <span className="shrink-0 font-bold text-amber-500">★</span>
+                          ) : (
+                            <span className="shrink-0 opacity-50">•</span>
+                          )}
+                          <span className={isSurprise ? "text-amber-800 font-medium" : ""}>
+                            {p.split("(")[0].trim()}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
 
           {submission.moscowJustification && (

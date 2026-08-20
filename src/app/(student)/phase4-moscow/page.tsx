@@ -24,7 +24,7 @@ const CATEGORIES: { key: Category; label: string; color: string; bg: string }[] 
   { key: "must", label: "Must Have", color: "text-red-700", bg: "bg-red-50 border-red-200" },
   { key: "should", label: "Should Have", color: "text-orange-700", bg: "bg-orange-50 border-orange-200" },
   { key: "could", label: "Could Have", color: "text-yellow-700", bg: "bg-yellow-50 border-yellow-200" },
-  { key: "wont", label: "Won't Have", color: "text-gray-700", bg: "bg-gray-50 border-gray-200" },
+  { key: "wont", label: "Won't Have", color: "text-slate-600", bg: "bg-slate-100 border-slate-300" },
 ];
 
 export default function Phase4Page() {
