@@ -8,16 +8,38 @@ import { useSubmission } from "@/hooks/useSubmission";
 import { saveMoscow } from "@/services/submissions.service";
 import type { MoscowMatrix } from "@/types/submission.types";
 
-const BASE_PROBLEMS = [
-  "God Class no Gerenciador principal (viola SRP)",
-  "Feature Envy no método de cálculo",
-  "Long Parameter List no construtor",
-  "Data Class (Classe Anêmica) sem comportamento",
-  "Erro de Associação: item não removido do objeto original na transferência",
-  "Erro de Agregação: dados dependentes excluídos em cascata indevidamente",
-  "Long Method com loops aninhados para busca",
-  "Força bruta com if/else em vez de delegação para classes",
-];
+const PROBLEMS_BY_REPO: Record<1 | 2 | 3, string[]> = {
+  1: [
+    "God Class em Liga.java — concentra cadastro, transferência, folha salarial, partidas e estatísticas (viola SRP)",
+    "Feature Envy em Liga.calcularFolhaSalarial() — percorre e soma dados de Jogador em vez de delegar para a própria classe",
+    "Long Parameter List em Partida() — construtor recebe 7 parâmetros primitivos (timeAId, timeBId, data, gols, local, arbitroId…)",
+    "Data Class em Jogador.java — apenas getters/setters, zero comportamento próprio, depende da Liga para tudo",
+    "Erro de Associação em Liga.transferirJogador() — adiciona jogador ao novo time mas não o remove do time de origem",
+    "Data Class em Time.java — sem comportamento próprio, não valida capacidade nem calcula nada por si mesmo",
+    "Long Method em Liga.gerarClassificacao() — loops aninhados calculando pontos, saldo e aproveitamento em um único método",
+    "Força bruta em Liga.buscarJogador() — percorre lista com if/else em vez de delegar busca ao próprio Time",
+  ],
+  2: [
+    "God Class em GestorObras.java — centraliza cadastro, alocação, cancelamento, custo e relatório (viola SRP)",
+    "Feature Envy em GestorObras.calcularCustoObra() — soma preço × quantidade de cada Material em vez de delegar ao próprio Material",
+    "Long Parameter List em Obra() — construtor recebe 6+ parâmetros primitivos (endereço, prazo, orçamento, status…)",
+    "Data Class em Material.java — apenas getters/setters, não calcula custo nem valida estoque por conta própria",
+    "Bug de Agregação em GestorObras.cancelarObra() — retorna sempre 1 em vez do tamanho real de materiaisIds liberados",
+    "Primitive Obsession em Obra.status — usa String livre (\"ativo\", \"cancelada\") em vez de objeto com comportamento e validação",
+    "Long Method em GestorObras.gerarRelatorio() — loops aninhados misturando filtragem, formatação e cálculos em um único método",
+    "Força bruta em GestorObras.atualizarStatus() — aceita qualquer String sem validar estados permitidos",
+  ],
+  3: [
+    "God Class em SistemaLogistica.java — centraliza cadastro de caminhões, cargas, rotas e entregas (viola SRP)",
+    "Feature Envy em SistemaLogistica.calcularRotaOtima() — acessa capacidade de Caminhao e peso de Carga diretamente em vez de delegar",
+    "Long Parameter List em Entrega() — construtor recebe 5 parâmetros primitivos (id, caminhaoId, cargaId, dataEntrega, observacoes)",
+    "Data Class em Carga.java — apenas getters/setters, não calcula peso nem gerencia seu próprio status",
+    "Bug de Associação em SistemaLogistica.cancelarEntrega() — muda status da carga mas não remove cargaId da lista do caminhão",
+    "Primitive Obsession em Carga.status — usa String livre (\"aguardando\", \"em_transito\") em vez de objeto com transições validadas",
+    "Long Method em SistemaLogistica.buscarCaminhaoDisponivel() — loops aninhados comparando capacidade e carga atual sem delegação",
+    "Data Class em Caminhao.java — sem comportamento próprio, não sabe calcular carga atual nem verificar disponibilidade",
+  ],
+};
 
 type Category = keyof MoscowMatrix;
 const CATEGORIES: { key: Category; label: string; color: string; bg: string }[] = [
@@ -31,6 +53,9 @@ export default function Phase4Page() {
   const router = useRouter();
   const { user } = useAuthStore();
   const { submission, loading } = useSubmission(user?.uid);
+
+  const repoId = ((user?.assignedRepoId ?? 1) as 1 | 2 | 3);
+  const baseProblems = PROBLEMS_BY_REPO[repoId] ?? PROBLEMS_BY_REPO[1];
 
   const [matrix, setMatrix] = useState<MoscowMatrix>({ must: [], should: [], could: [], wont: [] });
   const [justification, setJustification] = useState("");
@@ -51,7 +76,7 @@ export default function Phase4Page() {
   }, [submission]);
 
   const surpriseRequirements: string[] = submission?.surpriseRequirements ?? [];
-  const allProblems = [...BASE_PROBLEMS, ...surpriseRequirements];
+  const allProblems = [...baseProblems, ...surpriseRequirements];
 
   const categorized = new Set(Object.values(matrix).flat());
   const allCategorized = allProblems.every((p) => categorized.has(p));
@@ -140,7 +165,7 @@ export default function Phase4Page() {
         </h3>
 
         {/* Problemas base */}
-        {BASE_PROBLEMS.map((problem) => {
+        {baseProblems.map((problem) => {
           const current = getProblemCategory(problem);
           return (
             <div

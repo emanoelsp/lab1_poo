@@ -65,7 +65,7 @@ export default function Phase1Page() {
     try {
       if (!user?.uid) return;
       await saveInitialStoryPoints(user.uid, points);
-      router.push("/phase2-uml");
+      router.push("/phase3-repository");
     } catch {
       setError("Erro ao salvar. Tente novamente.");
     } finally {
@@ -84,10 +84,10 @@ export default function Phase1Page() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Fase 1 — Estimativa Inicial</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Fase 2 — Estimativa de Story Points</h1>
         <p className="text-gray-500 mt-1">
-          Leia a história do cliente e atribua Story Points (escala Fibonacci) para cada funcionalidade.
-          Avalie a <strong>complexidade</strong>, não o tempo.
+          Você acabou de analisar o UML do projeto. Agora estime a complexidade de cada funcionalidade.
+          Use o diagrama como referência — avalie a <strong>complexidade de implementação</strong>, não o tempo.
         </p>
       </div>
 
@@ -160,7 +160,7 @@ export default function Phase1Page() {
 
       <div className="flex justify-between items-center">
         <a
-          href="/onboarding"
+          href="/phase2-uml"
           className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors min-h-[48px] flex items-center"
         >
           ← Voltar

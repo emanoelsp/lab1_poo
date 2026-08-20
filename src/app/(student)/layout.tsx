@@ -11,8 +11,8 @@ import { Bell, X } from "lucide-react";
 
 const phases = [
   { href: "/onboarding", label: "Onboarding", step: 0 },
-  { href: "/phase1-estimation", label: "1. Story Points", step: 1 },
-  { href: "/phase2-uml", label: "2. UML", step: 2 },
+  { href: "/phase2-uml", label: "1. UML", step: 1 },
+  { href: "/phase1-estimation", label: "2. Story Points", step: 2 },
   { href: "/phase3-repository", label: "3. Repositório", step: 3 },
   { href: "/phase4-moscow", label: "4. MoSCoW", step: 4 },
   { href: "/phase5-delivery", label: "5. Entrega", step: 5 },

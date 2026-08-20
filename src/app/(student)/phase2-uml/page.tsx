@@ -399,7 +399,7 @@ export default function Phase2Page() {
       {/* Cabeçalho */}
       <div className="max-w-4xl mx-auto space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Fase 2 — Auditoria UML</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Fase 1 — Auditoria UML</h1>
           <p className="text-gray-500 mt-1">
             Diagrama de classes do sistema <strong>{title}</strong> deixado pela equipe anterior.
             Identifique os problemas e preencha qual classe ou método está afetado.
@@ -520,12 +520,12 @@ export default function Phase2Page() {
         </div>
 
         <div className="flex justify-between">
-          <Link href="/phase1-estimation" className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors min-h-[48px] flex items-center">
+          <Link href="/onboarding" className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors min-h-[48px] flex items-center">
             ← Voltar
           </Link>
           {allCorrect ? (
-            <Link href="/phase3-repository" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors min-h-[48px] flex items-center">
-              Próximo: Clonar Repositório →
+            <Link href="/phase1-estimation" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors min-h-[48px] flex items-center">
+              Próximo: Estimar Story Points →
             </Link>
           ) : (
             <button

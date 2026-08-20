@@ -293,7 +293,7 @@ export default function OnboardingPage() {
           ← Voltar ao Perfil
         </Link>
         <Link
-          href="/phase1-estimation"
+          href="/phase2-uml"
           className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors min-h-[48px] flex items-center"
         >
           Entendi — Iniciar Atividade →
