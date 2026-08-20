@@ -84,6 +84,14 @@ export async function saveUmlAnswer(
   });
 }
 
+export async function saveDeliveryDraft(
+  uid: string,
+  data: { githubLink?: string; storyPointsJustification?: string }
+): Promise<void> {
+  await ensureSubmission(uid);
+  await updateDoc(doc(db, "pbl_submissions", uid), data);
+}
+
 export async function acknowledgeSurprise(
   uid: string,
   requirements: string[]

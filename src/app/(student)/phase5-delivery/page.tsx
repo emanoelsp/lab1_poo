@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuthStore } from "@/stores/auth.store";
 import { useSubmission } from "@/hooks/useSubmission";
-import { saveFinalStoryPoints, finalizeSubmission } from "@/services/submissions.service";
+import { saveFinalStoryPoints, saveDeliveryDraft, finalizeSubmission } from "@/services/submissions.service";
 import { uploadPdf } from "@/services/storage.service";
 import { Upload, CheckCircle } from "lucide-react";
 
@@ -60,6 +60,18 @@ export default function Phase5Page() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Restaura estado do Firestore quando a submission carrega
+  useEffect(() => {
+    if (!submission) return;
+    if (submission.finalStoryPoints && Object.keys(submission.finalStoryPoints).length > 0) {
+      setFinalPoints(submission.finalStoryPoints);
+    }
+    if (submission.storyPointsJustification) setJustification(submission.storyPointsJustification);
+    if (submission.githubLink) setGithubLink(submission.githubLink);
+    if (submission.pdfUrl) setPdfUrl(submission.pdfUrl);
+    if (submission.submittedAt) setSubmitted(true);
+  }, [submission]);
 
   const initialPoints = submission?.initialStoryPoints ?? {};
   const features = Object.keys(initialPoints);
@@ -152,7 +164,11 @@ export default function Phase5Page() {
                 {FIBONACCI.map((n) => (
                   <button
                     key={n}
-                    onClick={() => setFinalPoints((p) => ({ ...p, [featureId]: n }))}
+                    onClick={() => {
+                      const updated = { ...finalPoints, [featureId]: n };
+                      setFinalPoints(updated);
+                      if (user?.uid) saveFinalStoryPoints(user.uid, updated).catch(() => {});
+                    }}
                     className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
                       finalPoints[featureId] === n
                         ? "bg-blue-600 text-white"
@@ -183,6 +199,9 @@ export default function Phase5Page() {
         <textarea
           value={justification}
           onChange={(e) => setJustification(e.target.value)}
+          onBlur={() => {
+            if (user?.uid && justification) saveDeliveryDraft(user.uid, { storyPointsJustification: justification }).catch(() => {});
+          }}
           rows={4}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none"
           placeholder="Ex: A God Class escondia dependências que não eram visíveis no UML, tornando a refatoração muito mais complexa do que o esperado..."
@@ -271,6 +290,9 @@ export default function Phase5Page() {
             type="url"
             value={githubLink}
             onChange={(e) => setGithubLink(e.target.value)}
+            onBlur={() => {
+              if (user?.uid && githubLink) saveDeliveryDraft(user.uid, { githubLink }).catch(() => {});
+            }}
             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[48px]"
             placeholder="https://github.com/seu-usuario/seu-repo"
           />

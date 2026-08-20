@@ -13,6 +13,7 @@ export interface Submission {
   finalStoryPoints: Record<string, number>;
   moscowMatrix: MoscowMatrix;
   moscowJustification: string;
+  storyPointsJustification?: string;
   githubLink: string;
   pdfUrl: string;
   surpriseAcknowledged: boolean;
