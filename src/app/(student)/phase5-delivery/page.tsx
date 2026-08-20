@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { useAuthStore } from "@/stores/auth.store";
 import { useSubmission } from "@/hooks/useSubmission";
 import { saveFinalStoryPoints, saveDeliveryDraft, finalizeSubmission } from "@/services/submissions.service";
 import { uploadPdf } from "@/services/storage.service";
-import { Upload, CheckCircle } from "lucide-react";
+import { Upload, CheckCircle, Lock } from "lucide-react";
 
 const FIBONACCI = [1, 2, 3, 5, 8] as const;
 
@@ -59,8 +61,19 @@ export default function Phase5Page() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
+  const [submissionsOpen, setSubmissionsOpen] = useState(true);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Ouve em tempo real se o admin bloqueou as entregas
+  useEffect(() => {
+    return onSnapshot(
+      doc(db, "admin_triggers", "submission_control"),
+      (snap) => {
+        setSubmissionsOpen(snap.exists() ? (snap.data().submissionsOpen ?? true) : true);
+      }
+    );
+  }, []);
 
   // Restaura estado do Firestore quando a submission carrega
   useEffect(() => {
@@ -435,6 +448,19 @@ export default function Phase5Page() {
         ))}
       </div>
 
+      {/* Banner de entregas bloqueadas */}
+      {!submissionsOpen && (
+        <div className="flex items-center gap-3 bg-red-50 border-2 border-red-300 rounded-2xl px-5 py-4">
+          <Lock className="w-6 h-6 text-red-600 shrink-0" />
+          <div>
+            <p className="font-bold text-red-700">Entregas encerradas</p>
+            <p className="text-sm text-red-600 mt-0.5">
+              Seu professor bloqueou novas submissões. Entre em contato com ele se precisar enviar sua entrega.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <a
           href="/phase4-moscow"
@@ -444,12 +470,16 @@ export default function Phase5Page() {
         </a>
         <button
           onClick={handleSubmit}
-          disabled={submitting}
+          disabled={submitting || !submissionsOpen}
           className={`flex-1 sm:flex-none sm:min-w-[280px] py-4 font-bold text-lg rounded-xl transition-colors min-h-[56px] text-white ${
-            canSubmit ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 hover:bg-gray-500"
+            !submissionsOpen
+              ? "bg-gray-400 cursor-not-allowed"
+              : canSubmit
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-gray-400 hover:bg-gray-500"
           }`}
         >
-          {submitting ? "Enviando..." : "✅ Finalizar e Enviar Atividade"}
+          {submitting ? "Enviando..." : !submissionsOpen ? "🔒 Entregas encerradas" : "✅ Finalizar e Enviar Atividade"}
         </button>
       </div>
     </div>

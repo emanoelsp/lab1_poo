@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { triggerSurprise, deactivateSurprise, getSubmissionByUid } from "@/services/admin.service";
+import { triggerSurprise, deactivateSurprise, setSubmissionsOpen, getSubmissionByUid } from "@/services/admin.service";
 import type { AppUser } from "@/types/user.types";
 import type { Submission } from "@/types/submission.types";
-import { ExternalLink, FileText, Zap, ZapOff, ChevronDown, ChevronUp } from "lucide-react";
+import { ExternalLink, FileText, Zap, ZapOff, ChevronDown, ChevronUp, Lock, Unlock } from "lucide-react";
 
 const REPOS = [
   { id: "1", label: "Repo 1 — Ligas Esportivas" },
@@ -167,6 +167,8 @@ export default function AdminDashboard() {
   const [submissions, setSubmissions] = useState<Record<string, Submission>>({});
   const [permissionError, setPermissionError] = useState(false);
   const [surpriseActive, setSurpriseActive] = useState(false);
+  const [submissionsOpen, setSubmissionsOpen_] = useState<boolean | null>(null);
+  const [togglingSubmissions, setTogglingSubmissions] = useState(false);
   const [triggering, setTriggering] = useState(false);
   const [surpriseExpanded, setSurpriseExpanded] = useState(false);
   const [expandedStudents, setExpandedStudents] = useState<Set<string>>(new Set());
@@ -211,6 +213,27 @@ export default function AdminDashboard() {
       (error) => console.warn("[admin] surprise onSnapshot error:", error.code)
     );
   }, []);
+
+  useEffect(() => {
+    return onSnapshot(
+      doc(db, "admin_triggers", "submission_control"),
+      (snap) => {
+        // Se doc não existe ainda, assume aberto (padrão)
+        setSubmissionsOpen_(snap.exists() ? (snap.data().submissionsOpen ?? true) : true);
+      },
+      (error) => console.warn("[admin] submission_control onSnapshot error:", error.code)
+    );
+  }, []);
+
+  async function handleToggleSubmissions() {
+    if (submissionsOpen === null) return;
+    setTogglingSubmissions(true);
+    try {
+      await setSubmissionsOpen(!submissionsOpen);
+    } finally {
+      setTogglingSubmissions(false);
+    }
+  }
 
   async function handleTrigger() {
     setTriggering(true);
@@ -334,6 +357,46 @@ export default function AdminDashboard() {
             </button>
           </div>
         )}
+      </div>
+
+      {/* Controle de Entregas */}
+      <div className={`rounded-2xl border-2 p-5 flex items-center justify-between gap-4 ${
+        submissionsOpen === false
+          ? "bg-red-50 border-red-300"
+          : "bg-green-50 border-green-300"
+      }`}>
+        <div className="flex items-center gap-3">
+          {submissionsOpen === false
+            ? <Lock className="w-6 h-6 text-red-600 shrink-0" />
+            : <Unlock className="w-6 h-6 text-green-600 shrink-0" />}
+          <div>
+            <p className={`font-bold text-base ${submissionsOpen === false ? "text-red-700" : "text-green-700"}`}>
+              Entregas {submissionsOpen === false ? "BLOQUEADAS" : "ABERTAS"}
+            </p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {submissionsOpen === false
+                ? "Alunos não conseguem mais finalizar a atividade."
+                : "Alunos podem finalizar e enviar a atividade normalmente."}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={handleToggleSubmissions}
+          disabled={togglingSubmissions || submissionsOpen === null}
+          className={`shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-colors min-h-[44px] disabled:opacity-50 ${
+            submissionsOpen === false
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-red-600 hover:bg-red-700"
+          }`}
+        >
+          {togglingSubmissions ? (
+            "Atualizando..."
+          ) : submissionsOpen === false ? (
+            <><Unlock className="w-4 h-4" /> Liberar entregas</>
+          ) : (
+            <><Lock className="w-4 h-4" /> Bloquear entregas</>
+          )}
+        </button>
       </div>
 
       {/* Resumo */}

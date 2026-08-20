@@ -33,6 +33,13 @@ export async function deactivateSurprise(): Promise<void> {
   });
 }
 
+export async function setSubmissionsOpen(open: boolean): Promise<void> {
+  await setDoc(doc(db, "admin_triggers", "submission_control"), {
+    submissionsOpen: open,
+    updatedAt: serverTimestamp(),
+  });
+}
+
 export async function getAllStudents(): Promise<AppUser[]> {
   const q = query(collection(db, "users"), where("role", "==", "student"));
   const snap = await getDocs(q);
