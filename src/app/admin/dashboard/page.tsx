@@ -165,6 +165,7 @@ function SubmissionDetail({ sub }: { sub: Submission }) {
 export default function AdminDashboard() {
   const [students, setStudents] = useState<AppUser[]>([]);
   const [submissions, setSubmissions] = useState<Record<string, Submission>>({});
+  const [permissionError, setPermissionError] = useState(false);
   const [surpriseActive, setSurpriseActive] = useState(false);
   const [triggering, setTriggering] = useState(false);
   const [surpriseExpanded, setSurpriseExpanded] = useState(false);
@@ -181,11 +182,21 @@ export default function AdminDashboard() {
         const users = snap.docs.map((d) => d.data() as AppUser);
         setStudents(users);
         const subs: Record<string, Submission> = {};
-        for (const u of users) {
-          const sub = await getSubmissionByUid(u.uid);
-          if (sub) subs[u.uid] = sub;
-        }
-        setSubmissions(subs);
+        let hasPermissionError = false;
+        await Promise.all(
+          users.map(async (u) => {
+            try {
+              const sub = await getSubmissionByUid(u.uid);
+              if (sub) subs[u.uid] = sub;
+            } catch (err: unknown) {
+              const code = (err as { code?: string }).code;
+              if (code === "permission-denied") hasPermissionError = true;
+              console.warn("[admin] submission fetch error for", u.uid, code);
+            }
+          })
+        );
+        setPermissionError(hasPermissionError);
+        setSubmissions({ ...subs });
       },
       (error) => console.warn("[admin] students onSnapshot error:", error.code)
     );
@@ -232,6 +243,18 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-bold text-gray-900">Painel Administrativo</h1>
         <p className="text-gray-500 mt-1">Acompanhe o progresso dos grupos em tempo real.</p>
       </div>
+
+      {permissionError && (
+        <div className="bg-red-50 border border-red-300 rounded-2xl px-5 py-4 space-y-1">
+          <p className="font-bold text-red-700 text-sm">⚠️ Permissão negada ao ler submissões dos alunos</p>
+          <p className="text-red-600 text-sm">
+            As regras do Firestore ainda não foram publicadas. Publique o arquivo{" "}
+            <code className="bg-red-100 px-1 rounded">firestore.rules</code> no Firebase Console
+            ou rode <code className="bg-red-100 px-1 rounded">npx firebase deploy --only firestore:rules</code>{" "}
+            no terminal.
+          </p>
+        </div>
+      )}
 
       {/* Fator Surpresa */}
       <div className="bg-gray-900 rounded-2xl overflow-hidden">
