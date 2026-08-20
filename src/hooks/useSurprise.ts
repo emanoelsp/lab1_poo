@@ -17,7 +17,7 @@ async function ensureSurpriseDoc() {
   }
 }
 
-// Beep de 3 notas via Web Audio API (sem arquivo de áudio)
+// Beep de alarme via Web Audio API (sem arquivo de áudio)
 function playAlertBeep() {
   try {
     const ctx = new AudioContext();
@@ -41,25 +41,55 @@ function playAlertBeep() {
   }
 }
 
-// Notificação nativa do OS (funciona com navegador minimizado)
+// Notificação nativa do OS — funciona com navegador minimizado
 function sendOsNotification() {
   if (typeof window === "undefined") return;
   if (!("Notification" in window)) return;
   if (Notification.permission !== "granted") return;
   try {
     const n = new Notification("🚨 FATOR SURPRESA — Ação Imediata!", {
-      body: "O cliente enviou uma mudança urgente. Abra o sistema agora!",
+      body: "O cliente enviou uma mudança urgente. Abra o sistema AGORA!",
       icon: "/favicon.ico",
-      requireInteraction: true, // não desaparece automaticamente
-      tag: "fator-surpresa",    // evita duplicatas
+      requireInteraction: true,
+      tag: "fator-surpresa",
     });
-    // Clicar na notificação traz a aba para frente
-    n.onclick = () => {
-      window.focus();
-      n.close();
-    };
+    n.onclick = () => { window.focus(); n.close(); };
   } catch {
-    // Notificação bloqueada — silencioso
+    // Bloqueado pelo browser — silencioso
+  }
+}
+
+// Muda o favicon para 🚨 usando canvas
+let originalFaviconHref: string | null = null;
+
+function setWarningFavicon() {
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.font = "28px serif";
+    ctx.fillText("🚨", 0, 26);
+    let link = document.querySelector<HTMLLinkElement>("link[rel*='icon']");
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "shortcut icon";
+      document.head.appendChild(link);
+    }
+    if (!originalFaviconHref) originalFaviconHref = link.href;
+    link.href = canvas.toDataURL();
+  } catch {
+    // Canvas indisponível — silencioso
+  }
+}
+
+function restoreFavicon() {
+  try {
+    const link = document.querySelector<HTMLLinkElement>("link[rel*='icon']");
+    if (link && originalFaviconHref) link.href = originalFaviconHref;
+  } catch {
+    // Silencioso
   }
 }
 
@@ -67,6 +97,8 @@ export function useSurprise() {
   const { setSurprise } = useSurpriseStore();
   const prevActiveRef = useRef(false);
   const flashIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const audioIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const notifIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function startTitleFlash() {
     if (flashIntervalRef.current) return;
@@ -85,6 +117,50 @@ export function useSurprise() {
     document.title = "PBL — Resgate de Projeto";
   }
 
+  // Alarme de áudio repetido a cada 6 s enquanto o modal estiver ativo
+  function startAudioLoop() {
+    if (audioIntervalRef.current) return;
+    audioIntervalRef.current = setInterval(() => {
+      playAlertBeep();
+    }, 6000);
+  }
+
+  function stopAudioLoop() {
+    if (!audioIntervalRef.current) return;
+    clearInterval(audioIntervalRef.current);
+    audioIntervalRef.current = null;
+  }
+
+  // Reenvia a notificação OS a cada 60 s para forçar aparição no tray
+  function startNotifLoop() {
+    if (notifIntervalRef.current) return;
+    notifIntervalRef.current = setInterval(() => {
+      sendOsNotification();
+    }, 60_000);
+  }
+
+  function stopNotifLoop() {
+    if (!notifIntervalRef.current) return;
+    clearInterval(notifIntervalRef.current);
+    notifIntervalRef.current = null;
+  }
+
+  function startAlerts() {
+    playAlertBeep();
+    startTitleFlash();
+    setWarningFavicon();
+    sendOsNotification();
+    startAudioLoop();
+    startNotifLoop();
+  }
+
+  function stopAlerts() {
+    stopTitleFlash();
+    stopAudioLoop();
+    stopNotifLoop();
+    restoreFavicon();
+  }
+
   useEffect(() => {
     let unsubscribe: () => void = () => {};
 
@@ -99,14 +175,11 @@ export function useSurprise() {
           setSurprise(newIsActive, data.messages ?? {}, data.requirements ?? {});
 
           if (newIsActive && !prevActiveRef.current) {
-            // Surpresa acabou de ser disparada — chama atenção
-            playAlertBeep();
-            startTitleFlash();
-            sendOsNotification();
+            startAlerts();
           }
 
           if (!newIsActive && prevActiveRef.current) {
-            stopTitleFlash();
+            stopAlerts();
           }
 
           prevActiveRef.current = newIsActive;
@@ -119,7 +192,7 @@ export function useSurprise() {
 
     return () => {
       unsubscribe();
-      stopTitleFlash();
+      stopAlerts();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setSurprise]);
