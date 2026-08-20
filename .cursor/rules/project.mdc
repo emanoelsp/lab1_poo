@@ -1,0 +1,93 @@
+---
+description: Regras do projeto - lidas automaticamente pelo Cursor em toda sessão
+alwaysApply: true
+---
+
+# Agente de Desenvolvimento
+
+Você é o agente principal de desenvolvimento deste projeto. Siga as regras abaixo sem exceção.
+
+## 📋 Leitura obrigatória antes de agir
+
+Sempre leia os seguintes arquivos antes de qualquer ação:
+- `docs/PRD.md` — objetivo e requisitos do produto
+- `docs/ARCHITECTURE.md` — stack, estrutura e regras técnicas
+- `docs/TASKS.md` — estado atual das tarefas
+- `docs/TESTING.md` — estratégia de testes
+- `docs/DESIGN.md` — padrões de UI/UX
+- `docs/AGENTS.md` — regras completas do agente
+- `docs/AI_AGENT.md` — apenas se o projeto usar agente de IA
+
+## ⚙️ Regras obrigatórias
+
+- Antes de codar, explique o plano.
+- Implemente uma etapa por vez.
+- Faça mudanças pequenas, revisáveis e seguras.
+- Nunca quebre funcionalidades existentes.
+- Sempre atualize `docs/TASKS.md` após concluir uma tarefa.
+- Sempre rode build, lint e testes quando possível.
+- Corrija erros antes de finalizar.
+- Não adicione dependências sem justificar.
+- Priorize código limpo, simples e reutilizável.
+
+## 🛠️ Stack obrigatória
+
+- **Framework**: Next.js com TypeScript estrito
+- **Estilo**: Tailwind CSS
+- **Componentes**: shadcn/ui (sempre preferir sobre custom)
+- **Ícones**: lucide-react
+- **Auth**: Firebase Auth
+- **Banco**: Firestore
+- **Validação**: Zod
+- **Forms**: React Hook Form
+- **Cache/Async**: TanStack Query
+- **Estado global**: Zustand
+- **Deploy**: Vercel
+
+## 🔄 Fluxo de trabalho
+
+1. Ler toda a documentação em `/docs`
+2. Criar plano detalhado
+3. Atualizar `docs/TASKS.md`
+4. Implementar a próxima tarefa
+5. Criar/atualizar testes
+6. Rodar `lint` → `test` → `build`
+7. Corrigir problemas encontrados
+8. Explicar o que foi feito
+
+## 📁 Estrutura de pastas
+
+```
+/src
+  /app           → rotas Next.js App Router
+  /components
+    /ui          → componentes shadcn/ui
+    /shared      → componentes reutilizáveis
+    /features    → componentes por feature
+  /features      → lógica por domínio
+  /lib           → firebase, utils, configs
+  /hooks         → custom hooks
+  /schemas       → schemas Zod
+  /services      → operações Firestore
+  /types         → TypeScript types
+  /stores        → Zustand stores
+  /tests         → testes unitários
+/playwright      → testes E2E
+/docs            → documentação do projeto
+```
+
+## ✅ Estados de UI obrigatórios
+
+Todo componente que faz requisição deve ter:
+- `loading` — skeleton ou spinner
+- `empty` — estado vazio com mensagem
+- `error` — mensagem de erro clara
+- `success` — feedback positivo
+
+## 🚫 Proibido
+
+- Acessar Firestore diretamente em componentes (usar services)
+- Commitar secrets ou `.env`
+- Criar componentes do zero quando existe equivalente no shadcn/ui
+- Pular testes em features novas
+- Fazer deploy sem passar em lint + test + build
