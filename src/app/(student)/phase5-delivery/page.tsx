@@ -58,6 +58,7 @@ export default function Phase5Page() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -77,7 +78,10 @@ export default function Phase5Page() {
   const features = Object.keys(initialPoints);
 
   const allFinalFilled = features.length > 0 && features.every((f) => finalPoints[f] !== undefined);
-  const canSubmit = allFinalFilled && justification.length >= 20 && githubLink.includes("github.com") && pdfUrl !== "";
+  const validJustification = justification.trim().length >= 20;
+  const validGithub = githubLink.includes("github.com");
+  const validPdf = pdfUrl !== "";
+  const canSubmit = allFinalFilled && validJustification && validGithub && validPdf;
 
   async function handlePdfUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -102,6 +106,7 @@ export default function Phase5Page() {
   }
 
   async function handleSubmit() {
+    setShowValidation(true);
     if (!canSubmit || !user?.uid) return;
     setSubmitting(true);
     try {
@@ -142,9 +147,14 @@ export default function Phase5Page() {
       </div>
 
       {/* Comparativo de Story Points */}
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
+      <div className={`bg-white rounded-2xl border overflow-hidden ${showValidation && !allFinalFilled ? "border-red-400" : "border-gray-200"}`}>
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-bold text-gray-900">Comparativo de Story Points</h2>
+          {showValidation && !allFinalFilled && (
+            <span className="text-xs font-semibold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded-lg">
+              Preencha todos os Story Points finais
+            </span>
+          )}
         </div>
         <div className="grid grid-cols-12 bg-gray-50 border-b border-gray-200 px-6 py-3 text-xs font-bold text-gray-500 uppercase">
           <span className="col-span-4">Funcionalidade</span>
@@ -157,7 +167,7 @@ export default function Phase5Page() {
           const final = finalPoints[featureId];
           const delta = final !== undefined ? final - initial : null;
           return (
-            <div key={featureId} className="grid grid-cols-12 border-b border-gray-100 last:border-0 px-6 py-4 items-center">
+            <div key={featureId} className={`grid grid-cols-12 border-b border-gray-100 last:border-0 px-6 py-4 items-center ${showValidation && finalPoints[featureId] === undefined ? "bg-red-50" : ""}`}>
               <span className="col-span-4 text-sm font-medium text-gray-800">{featureId}</span>
               <span className="col-span-2 text-center text-sm font-bold text-gray-500">{initial}</span>
               <div className="col-span-4 flex gap-1 justify-center flex-wrap">
@@ -192,10 +202,13 @@ export default function Phase5Page() {
       </div>
 
       {/* Justificativa do comparativo */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-3">
-        <label className="block font-bold text-gray-800">
-          Por que a complexidade real diferiu da estimada? *
-        </label>
+      <div className={`bg-white rounded-2xl border p-6 space-y-3 ${showValidation && !validJustification ? "border-red-400" : "border-gray-200"}`}>
+        <div className="flex items-center justify-between">
+          <label className="block font-bold text-gray-800">Por que a complexidade real diferiu da estimada? *</label>
+          {showValidation && !validJustification && (
+            <span className="text-xs font-semibold text-red-600">Mínimo 20 caracteres</span>
+          )}
+        </div>
         <textarea
           value={justification}
           onChange={(e) => setJustification(e.target.value)}
@@ -203,7 +216,7 @@ export default function Phase5Page() {
             if (user?.uid && justification) saveDeliveryDraft(user.uid, { storyPointsJustification: justification }).catch(() => {});
           }}
           rows={4}
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none"
+          className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none ${showValidation && !validJustification ? "border-red-400 bg-red-50" : "border-gray-300"}`}
           placeholder="Ex: A God Class escondia dependências que não eram visíveis no UML, tornando a refatoração muito mais complexa do que o esperado..."
         />
       </div>
@@ -283,9 +296,14 @@ export default function Phase5Page() {
           ))}
         </ol>
         <div className="px-6 pb-5 pt-2">
-          <label className="block text-sm font-bold text-gray-800 mb-2">
-            Cole aqui o link do seu repositório no GitHub após o push *
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-bold text-gray-800">
+              Cole aqui o link do seu repositório no GitHub após o push *
+            </label>
+            {showValidation && !validGithub && (
+              <span className="text-xs font-semibold text-red-600 shrink-0 ml-2">Link do GitHub inválido</span>
+            )}
+          </div>
           <input
             type="url"
             value={githubLink}
@@ -293,7 +311,7 @@ export default function Phase5Page() {
             onBlur={() => {
               if (user?.uid && githubLink) saveDeliveryDraft(user.uid, { githubLink }).catch(() => {});
             }}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[48px]"
+            className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[48px] ${showValidation && !validGithub ? "border-red-400 bg-red-50" : "border-gray-300"}`}
             placeholder="https://github.com/seu-usuario/seu-repo"
           />
         </div>
@@ -364,8 +382,13 @@ export default function Phase5Page() {
       </div>
 
       {/* Upload PDF */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="font-bold text-gray-900">Upload do PDF *</h2>
+      <div className={`bg-white rounded-2xl border p-6 space-y-4 ${showValidation && !validPdf ? "border-red-400" : "border-gray-200"}`}>
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-gray-900">Upload do PDF *</h2>
+          {showValidation && !validPdf && (
+            <span className="text-xs font-semibold text-red-600">PDF obrigatório</span>
+          )}
+        </div>
         <input
           ref={fileRef}
           type="file"
@@ -394,6 +417,24 @@ export default function Phase5Page() {
         <p className="text-sm text-red-600 bg-red-50 rounded-lg px-4 py-3">{error}</p>
       )}
 
+      {/* Checklist de requisitos */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-2">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Requisitos para envio</p>
+        {[
+          { ok: allFinalFilled, label: "Story Points finais preenchidos para todas as funcionalidades" },
+          { ok: validJustification, label: "Justificativa do comparativo (mínimo 20 caracteres)" },
+          { ok: validGithub, label: "Link do repositório GitHub válido" },
+          { ok: validPdf, label: "PDF de entrega enviado" },
+        ].map(({ ok, label }) => (
+          <div key={label} className="flex items-center gap-2.5">
+            <span className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${ok ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
+              {ok ? "✓" : "✗"}
+            </span>
+            <span className={`text-sm ${ok ? "text-gray-600" : "text-red-600 font-medium"}`}>{label}</span>
+          </div>
+        ))}
+      </div>
+
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <a
           href="/phase4-moscow"
@@ -403,8 +444,10 @@ export default function Phase5Page() {
         </a>
         <button
           onClick={handleSubmit}
-          disabled={!canSubmit || submitting}
-          className="flex-1 sm:flex-none sm:min-w-[280px] py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-bold text-lg rounded-xl transition-colors min-h-[56px]"
+          disabled={submitting}
+          className={`flex-1 sm:flex-none sm:min-w-[280px] py-4 font-bold text-lg rounded-xl transition-colors min-h-[56px] text-white ${
+            canSubmit ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 hover:bg-gray-500"
+          }`}
         >
           {submitting ? "Enviando..." : "✅ Finalizar e Enviar Atividade"}
         </button>
