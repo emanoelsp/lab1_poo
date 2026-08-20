@@ -42,11 +42,11 @@ const PROBLEMS_BY_REPO: Record<1 | 2 | 3, string[]> = {
 };
 
 type Category = keyof MoscowMatrix;
-const CATEGORIES: { key: Category; label: string; color: string; bg: string }[] = [
-  { key: "must", label: "Must Have", color: "text-red-700", bg: "bg-red-50 border-red-200" },
-  { key: "should", label: "Should Have", color: "text-orange-700", bg: "bg-orange-50 border-orange-200" },
-  { key: "could", label: "Could Have", color: "text-yellow-700", bg: "bg-yellow-50 border-yellow-200" },
-  { key: "wont", label: "Won't Have", color: "text-slate-800", bg: "bg-slate-400 border-slate-500" },
+const CATEGORIES: { key: Category; label: string; color: string; bg: string; active: string }[] = [
+  { key: "must",   label: "Must Have",   color: "text-red-800",    bg: "bg-red-50 border-red-300",      active: "bg-red-100 border-red-600 text-red-900" },
+  { key: "should", label: "Should Have", color: "text-orange-800", bg: "bg-orange-50 border-orange-300", active: "bg-orange-100 border-orange-600 text-orange-900" },
+  { key: "could",  label: "Could Have",  color: "text-yellow-800", bg: "bg-yellow-50 border-yellow-300", active: "bg-yellow-100 border-yellow-600 text-yellow-900" },
+  { key: "wont",   label: "Won't Have",  color: "text-slate-800",  bg: "bg-slate-200 border-slate-400",  active: "bg-slate-400 border-slate-700 text-slate-900" },
 ];
 
 export default function Phase4Page() {
@@ -178,10 +178,10 @@ export default function Phase4Page() {
                   <button
                     key={cat.key}
                     onClick={() => assignProblem(problem, cat.key)}
-                    className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all min-h-[36px] ${
+                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all min-h-[36px] ${
                       current === cat.key
-                        ? `${cat.bg} ${cat.color} border-current font-bold`
-                        : "bg-gray-100 border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-200"
+                        ? `${cat.active} border-2 font-bold shadow-sm`
+                        : "bg-gray-100 border border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-200"
                     }`}
                   >
                     {cat.label}
@@ -237,7 +237,7 @@ export default function Phase4Page() {
       {allCategorized && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {CATEGORIES.map((cat) => (
-            <div key={cat.key} className={`rounded-xl border p-4 ${cat.bg}`}>
+            <div key={cat.key} className={`rounded-xl border-2 p-4 ${cat.bg}`}>
               <p className={`text-xs font-bold ${cat.color} mb-2`}>{cat.label}</p>
               <ul className="space-y-1">
                 {matrix[cat.key].map((p) => {
