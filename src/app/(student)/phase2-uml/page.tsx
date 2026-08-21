@@ -332,6 +332,12 @@ export default function Phase2Page() {
   const [revealIdx, setRevealIdx] = useState<number | null>(null);
   const [revealVisible, setRevealVisible] = useState(false);
 
+  function isCorrect(i: number) {
+    return issues[i].answer.includes(normalize(inputs[i] ?? ""));
+  }
+
+  const allCorrect = issues.every((_, i) => isCorrect(i));
+
   // Restaura respostas corretas salvas no Firestore
   useEffect(() => {
     if (!submission?.umlAnswers) return;
@@ -341,15 +347,21 @@ export default function Phase2Page() {
       if (saved) restored[i] = saved;
     });
     if (Object.keys(restored).length > 0) {
-      setInputs((prev) => ({ ...restored, ...prev }));
+      setInputs((prev) => ({ ...prev, ...restored }));
     }
   }, [submission, repoId, issues]);
 
-  function isCorrect(i: number) {
-    return issues[i].answer.includes(normalize(inputs[i] ?? ""));
-  }
-
-  const allCorrect = issues.every((_, i) => isCorrect(i));
+  // Salva todas as corretas quando o aluno completa a fase (garante persistência)
+  useEffect(() => {
+    if (!allCorrect || !user?.uid) return;
+    issues.forEach((issue, i) => {
+      const val = inputs[i] ?? "";
+      if (issue.answer.includes(normalize(val))) {
+        saveUmlAnswer(user.uid!, `${repoId}_${i}`, val).catch(() => null);
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allCorrect]);
 
   function recordWrongAttempt(i: number) {
     setAttempts((prev) => {
@@ -369,11 +381,11 @@ export default function Phase2Page() {
     });
   }
 
-  function handleBlur(i: number) {
-    const val = inputs[i] ?? "";
+  function handleBlur(i: number, domVal: string) {
+    // usa o valor direto do DOM para evitar leitura de estado stale
+    const val = domVal.trim().length > 0 ? domVal : (inputs[i] ?? "");
     if (val.trim().length === 0) return;
     if (issues[i].answer.includes(normalize(val))) {
-      // Persiste resposta correta no Firestore
       if (user?.uid) {
         saveUmlAnswer(user.uid, `${repoId}_${i}`, val).catch(() => null);
       }
@@ -476,7 +488,7 @@ export default function Phase2Page() {
                           type="text"
                           value={val}
                           onChange={(e) => handleChange(i, e.target.value)}
-                          onBlur={() => handleBlur(i)}
+                          onBlur={(e) => handleBlur(i, e.target.value)}
                           disabled={correct}
                           placeholder={issue.placeholder}
                           className={`w-full px-3 py-2 pr-9 rounded-lg border text-sm focus:outline-none focus:ring-2 transition-colors ${
